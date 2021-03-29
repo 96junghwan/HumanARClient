@@ -3,6 +3,7 @@ Human AR Module for Unity
 
 
 # Installation
-> Open Cmd at <yourUnityProjectDirectory>/Assets/3rdPary/
-> git clone https://github.com/96junghwan/HumanARClient.git
+1. Open Cmd at <yourUnityProjectDirectory>/Assets/3rdPary/
+2. > git clone https://github.com/96junghwan/HumanARClient.git
+3. > git pull
 
