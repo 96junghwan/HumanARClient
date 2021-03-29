@@ -1,0 +1,8 @@
+	EXPORT bool Connect(int width, int height, double fps);
+	EXPORT bool Disconnect();
+	EXPORT bool Play();
+	EXPORT bool Stop();
+	EXPORT bool CopyBuffer(unsigned char* dst);
+	EXPORT bool IsConnected();
+	EXPORT bool GetExposure(long* value);
+	EXPORT bool SetExposure(long value);
