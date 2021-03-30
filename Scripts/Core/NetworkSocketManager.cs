@@ -301,7 +301,6 @@ namespace CellBig.Module.HumanDetection
         // 서버와 연결 시도하는 함수
         private void TryConnect()
         {
-            Debug.Log("Try Connect");
             try
             {
                 server = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
