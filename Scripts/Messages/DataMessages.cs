@@ -150,6 +150,29 @@ namespace CellBig.Module.HumanDetection
         }
     }
 
+    /// <summary>
+    /// 서버에서 방금 수신한 3D 관절 좌표 메시지 클래스
+    /// NetworkSocketManager가 BufferManager에게 보낼 것임
+    /// </summary>
+    public class DetectHuman3DJointResultMsg : Message
+    {
+        /// <summary>
+        /// 관절의 프레임 번호
+        /// </summary>
+        public int frameID;
+
+        /// <summary>
+        /// 3D 관절 데이터 리스트, 한 프레임 안의 모든 사람 관절 정보가 포함됨
+        /// </summary>
+        public List<Human3DJoint> jointList;
+
+        public DetectHuman3DJointResultMsg(int frameID, List<Human3DJoint> jointList)
+        {
+            this.frameID = frameID;
+            this.jointList = jointList;
+        }
+    }
+
 
 
 
@@ -225,6 +248,30 @@ namespace CellBig.Module.HumanDetection
             this.frameID = frameID;
             this.texture = texture;
             this.mask = mask;
+        }
+    }
+
+
+    /// <summary>
+    /// from Buffer,
+    /// 한 프레임의 3D 관절 재생 메시지 클래스
+    /// </summary>
+    public class PlayHuman3DJointListMsg : Message
+    {
+        /// <summary>
+        /// 관절의 프레임 번호
+        /// </summary>
+        public int frameID;
+
+        /// <summary>
+        /// 한 프레임의 모든 사람의 관절 데이터
+        /// </summary>
+        public List<Human3DJoint> jointList;
+
+        public PlayHuman3DJointListMsg(int frameID, List<Human3DJoint> jointList)
+        {
+            this.frameID = frameID;
+            this.jointList = jointList;
         }
     }
 }

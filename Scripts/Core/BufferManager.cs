@@ -32,6 +32,7 @@ namespace CellBig.Module.HumanDetection
 
         // 버퍼 옵션 : noDelay용 변수
         private Queue<PlayHumanJointListMsg> noDelayJointMsgQ;
+        private Queue<PlayHuman3DJointListMsg> noDelay3DJointMsgQ;
         private Queue<PlayFrameTextureAndHumanMaskMsg> noDelayMaskMsgQ;
         private MatOfByte mob;
         private Mat noDelayMask;
@@ -243,6 +244,12 @@ namespace CellBig.Module.HumanDetection
             }
         }
 
+        // 수신된 3D 관절 리스트를 버퍼에 저장하는 함수
+        private void OnDetectHuman3DJointResultMsg(DetectHuman3DJointResultMsg msg)
+        {
+
+        }
+
         // 수신된 마스크를 버퍼에 저장하는 함수
         private void OnDetectHumanMaskResultMsg(DetectHumanMaskResultMsg msg)
         {
@@ -360,6 +367,7 @@ namespace CellBig.Module.HumanDetection
 
             networkFeedbackMsgQ = new Queue<NetworkFeedbackMsg>();
             noDelayJointMsgQ = new Queue<PlayHumanJointListMsg>();
+            noDelay3DJointMsgQ = new Queue<PlayHuman3DJointListMsg>();
             noDelayMaskMsgQ = new Queue<PlayFrameTextureAndHumanMaskMsg>();
             
             lagacyJointList = new List<HumanJoint>();
@@ -374,6 +382,7 @@ namespace CellBig.Module.HumanDetection
             // 메세지 리스너 추가
             Message.AddListener<CapturedFrameMsg>(OnCapturedFrameMsg);
             Message.AddListener<DetectHumanJointResultMsg>(OnDetectHumanJointResultMsg);
+            Message.AddListener<DetectHuman3DJointResultMsg>(OnDetectHuman3DJointResultMsg);
             Message.AddListener<DetectHumanMaskResultMsg>(OnDetectHumanMaskResultMsg);
         }
 
@@ -395,6 +404,7 @@ namespace CellBig.Module.HumanDetection
 
             Message.RemoveListener<CapturedFrameMsg>(OnCapturedFrameMsg);
             Message.RemoveListener<DetectHumanJointResultMsg>(OnDetectHumanJointResultMsg);
+            Message.RemoveListener<DetectHuman3DJointResultMsg>(OnDetectHuman3DJointResultMsg);
             Message.RemoveListener<DetectHumanMaskResultMsg>(OnDetectHumanMaskResultMsg);
         }
 
@@ -470,6 +480,12 @@ namespace CellBig.Module.HumanDetection
                 Message.Send<PlayHumanJointListMsg>(noDelayJointMsgQ.Dequeue());
             }
 
+            // noDelay 3D Joint 전송
+            if (noDelay3DJointMsgQ.Count != 0)
+            {
+                Message.Send<PlayHuman3DJointListMsg>(noDelay3DJointMsgQ.Dequeue());
+            }
+
             // noDelay Mask 전송
             if (noDelayMaskMsgQ.Count != 0)
             {
@@ -502,6 +518,11 @@ namespace CellBig.Module.HumanDetection
                         Message.Send<PlayHumanJointListMsg>(new PlayHumanJointListMsg(buffer[PLAY_INDEX].frameID, buffer[PLAY_INDEX].jointList));
                     }
 
+                    if (buffer[PLAY_INDEX].is3DJointUpdated)
+                    {
+                        Message.Send<PlayHuman3DJointListMsg>(new PlayHuman3DJointListMsg(buffer[PLAY_INDEX].frameID, buffer[PLAY_INDEX].joint3DList));
+                    }
+
                     if (buffer[PLAY_INDEX].isMaskUpdated)
                     {
                         Message.Send<PlayFrameTextureAndHumanMaskMsg>(new PlayFrameTextureAndHumanMaskMsg(buffer[PLAY_INDEX].frameID, buffer[PLAY_INDEX].texture, buffer[PLAY_INDEX].mask));
@@ -511,6 +532,7 @@ namespace CellBig.Module.HumanDetection
                 // 데이터 재생 처리, 버퍼 인덱스 증가
                 buffer[PLAY_INDEX].isFrameUpdated = false;
                 buffer[PLAY_INDEX].isJointUpdated = false;
+                buffer[PLAY_INDEX].is3DJointUpdated = false;
                 buffer[PLAY_INDEX].isMaskUpdated = false;
                 if (++PLAY_INDEX >= bufferOptionModel.bufferMax) { PLAY_INDEX = 0; }
             }

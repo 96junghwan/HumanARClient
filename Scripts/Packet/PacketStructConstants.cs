@@ -25,6 +25,7 @@ namespace CellBig.Module.HumanDetection
         Response_ServerStatus,
         Response_NNCal_Segmentation,
         Response_NNCal_2DPose,
+        Response_NNCal_3DPose,
     }
 
 

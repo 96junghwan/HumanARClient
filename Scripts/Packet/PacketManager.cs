@@ -16,6 +16,7 @@ namespace CellBig.Module.HumanDetection
         // 처리 결과 수출할 외부 변수
         private Queue<SendData> sendQ;
         private Queue<DetectHumanJointResultMsg> humanPoseMsgQ;
+        private Queue<DetectHuman3DJointResultMsg> human3DPoseMsgQ;
         private Queue<DetectHumanMaskResultMsg> humanSegMsgQ;
         private Queue<PacketDecodeResult> packetDecodeResultQ;
 
@@ -36,16 +37,19 @@ namespace CellBig.Module.HumanDetection
         private FramePacketSpliter framePacketSpliter;
         private SegPacketMerger segPacketMerger;
         private Pose2DPacketMerger pose2DPacketMerger;
+        private Pose3DPacketMerger pose3DPacketMerger;
         private int mergedPacketListMax = 5;
 
 
 
 
         // 생성자
-        public PacketManager(Queue<SendData> sendQ, Queue<DetectHumanJointResultMsg> humanPoseMsgQ, Queue<DetectHumanMaskResultMsg> humanSegMsgQ, Queue<PacketDecodeResult> packetDecodeResultQ)
+        public PacketManager(Queue<SendData> sendQ, Queue<DetectHumanJointResultMsg> humanPoseMsgQ, Queue<DetectHuman3DJointResultMsg> human3DPoseMsgQ, 
+        Queue<DetectHumanMaskResultMsg> humanSegMsgQ, Queue<PacketDecodeResult> packetDecodeResultQ)
         {
             this.sendQ = sendQ;
             this.humanPoseMsgQ = humanPoseMsgQ;
+            this.human3DPoseMsgQ = human3DPoseMsgQ;
             this.humanSegMsgQ = humanSegMsgQ;
             this.packetDecodeResultQ = packetDecodeResultQ;
 
@@ -70,6 +74,7 @@ namespace CellBig.Module.HumanDetection
             framePacketSpliter = new FramePacketSpliter(this.sendQ);
             segPacketMerger = new SegPacketMerger(mergedPacketListMax, this.humanSegMsgQ);
             pose2DPacketMerger = new Pose2DPacketMerger(mergedPacketListMax, postProcessOptionModel, this.humanPoseMsgQ);
+            pose3DPacketMerger = new Pose3DPacketMerger(mergedPacketListMax, postProcessOptionModel, this.human3DPoseMsgQ);
 
             recvPacketQ = new Queue<ReceivedPacket>();
             sendingImageQ = new Queue<SendingImage>();
@@ -144,6 +149,12 @@ namespace CellBig.Module.HumanDetection
             else if (header.msgType == (ushort)MSGType.Response_NNCal_2DPose)
             {
                 this.PutNew2DPosePacket(header, packetByte);
+            }
+
+            // [3DPose 결과] 패킷 수신 시 : 패킷 매니저에 전달
+            else if (header.msgType == (ushort)MSGType.Response_NNCal_3DPose)
+            {
+                this.PutNew3DPosePacket(header, packetByte);
             }
 
             // [경고 메세지] 패킷 수신 시
@@ -240,6 +251,20 @@ namespace CellBig.Module.HumanDetection
             packetStruct = PacketConverter.Bytes2PacketStruct<Response2DPosePacketStruct>(packetStructByte);
 
             pose2DPacketMerger.PutPacket(packetStruct, packetData);
+        }
+
+        // 새로운 3DPose 결과 패킷 받아서 Pose3DPacketMerger에 저장하는 함수
+        public void PutNew3DPosePacket(PacketHeader header, byte[] packetByte)
+        {
+            Response3DPosePacketStruct packetStruct = new Response3DPosePacketStruct();
+            byte[] packetStructByte = new byte[header.packetStructSize];
+            byte[] packetData = new byte[header.packetDataSize];
+
+            Buffer.BlockCopy(packetByte, 0, packetStructByte, 0, header.packetStructSize);
+            Buffer.BlockCopy(packetByte, header.packetStructSize, packetData, 0, header.packetDataSize);
+            packetStruct = PacketConverter.Bytes2PacketStruct<Response3DPosePacketStruct>(packetStructByte);
+
+            pose3DPacketMerger.PutPacket(packetStruct, packetData);
         }
     }
 }

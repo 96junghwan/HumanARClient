@@ -83,6 +83,7 @@ namespace CellBig.Module.HumanDetection
 
         // 결과 데이터 전달 메세지 큐
         private Queue<DetectHumanJointResultMsg> humanPoseMsgQ;
+        private Queue<DetectHuman3DJointResultMsg> human3DPoseMsgQ;
         private Queue<DetectHumanMaskResultMsg> humanSegMsgQ;
 
         // 네트워크 제어 Coroutine용 변수
@@ -509,12 +510,13 @@ namespace CellBig.Module.HumanDetection
 
             // 합병된 결과 데이터를 메세지로 전송하기 위한 메세지 큐 초기 할당
             humanPoseMsgQ = new Queue<DetectHumanJointResultMsg>();
+            human3DPoseMsgQ = new Queue<DetectHuman3DJointResultMsg>();
             humanSegMsgQ = new Queue<DetectHumanMaskResultMsg>();
 
             // 패킷 매니저, SendQ 할당
             sendQ = new Queue<SendData>();
             packetDecodeResultQ = new Queue<PacketDecodeResult>();
-            packetManager = new PacketManager(sendQ, humanPoseMsgQ, humanSegMsgQ, packetDecodeResultQ);
+            packetManager = new PacketManager(sendQ, humanPoseMsgQ, human3DPoseMsgQ, humanSegMsgQ, packetDecodeResultQ);
 
             // recv용 임시 버퍼 변수
             asyncRecvBuffer = new byte[NetworkInfo.NetworkbufferMax];
@@ -546,6 +548,7 @@ namespace CellBig.Module.HumanDetection
 
             // Queue
             if (humanPoseMsgQ != null) { humanPoseMsgQ.Clear(); humanPoseMsgQ = null; }
+            if (human3DPoseMsgQ != null) { human3DPoseMsgQ.Clear(); human3DPoseMsgQ = null; }
             if (humanSegMsgQ != null) { humanSegMsgQ.Clear(); humanSegMsgQ = null; }
             if (packetDecodeResultQ != null) { packetDecodeResultQ.Clear(); packetDecodeResultQ = null; }
         }
@@ -901,6 +904,15 @@ namespace CellBig.Module.HumanDetection
                 for (int i = 0; i < humanPoseMsgQ.Count; i++)
                 {
                     Message.Send<DetectHumanJointResultMsg>(humanPoseMsgQ.Dequeue());
+                }
+            }
+
+            // PoseQ에 있는 결과 관절 메세지들 전부 전송
+            if (human3DPoseMsgQ != null)
+            {
+                for (int i = 0; i < human3DPoseMsgQ.Count; i++)
+                {
+                    Message.Send<DetectHuman3DJointResultMsg>(human3DPoseMsgQ.Dequeue());
                 }
             }
         }

@@ -167,6 +167,11 @@ namespace CellBig.Module.HumanDetection
         /// AlphaPose를 이용한 2D Human Pose Estimation 사용 옵션
         /// </summary>
         AlphaPose = 4,
+
+        /// <summary>
+        /// BMC를 이용한 3D Human Pose Estimation 사용 옵션
+        /// </summary>
+        BMC = 8,
     }
 
     /// <summary>
@@ -273,6 +278,157 @@ namespace CellBig.Module.HumanDetection
     }
 
     /// <summary>
+    /// 3D Joint를 다룰 때 필요한 static 데이터
+    /// </summary>
+    public static class Joint3DData
+    {
+        /// <summary>
+        /// 포지션 정보가(X, Y, Z) 들어오는 관절 개수
+        /// </summary>
+        public const int POSITION_JOINT_MAX = 49;
+
+        /// <summary>
+        /// 각도 정보가(X, Y, Z) 들어오는 관절 개수
+        /// </summary>
+        public const int ANGLE_JOINT_MAX = 24;
+
+        /// <summary>
+        /// 포지션 정보가 들어오는 관절의 타입
+        /// </summary>
+        public enum PositionJointType : int
+        {
+            OP_Nose = 0,
+            
+            OP_Neck,
+            
+            OP_R_Shoulder,
+
+            OP_R_Elblow, 
+            
+            OP_R_Wrist, 
+            
+            OP_L_Shoulder, 
+            
+            OP_L_Elbow, 
+            
+            OP_L_Wrist, 
+            
+            OP_Middle_Hip, 
+            
+            OP_R_Hip, 
+            
+            OP_R_Knee, 
+            
+            OP_R_Ankle, 
+            
+            OP_L_Hip, 
+            
+            OP_L_Knee, 
+            
+            OP_L_Ankle, 
+            
+            OP_R_Eye, 
+            
+            OP_L_Eye, 
+            
+            OP_R_Ear, 
+            
+            OP_L_Ear, 
+            
+            OP_L_Big_Toe, 
+            
+            OP_L_Small_Toe, 
+            
+            OP_L_Heel, 
+            
+            OP_R_Big_Toe, 
+            
+            OP_R_Small_Toe, 
+            
+            OP_R_Heel, 
+            
+            R_Ankle, 
+            
+            R_Knee, 
+            
+            R_Hip, 
+            
+            L_Hip, 
+            
+            L_Knee, 
+            
+            L_Ankle, 
+            
+            R_Wrist, 
+            
+            R_Elbow, 
+            
+            R_Shoulder, 
+            
+            L_Shoulder, 
+            
+            L_Elbow, 
+            
+            L_Wrist, 
+            
+            Neck, // (LSP)
+            
+            TopOfHead, // (LSP)
+            
+            Pelvis, //(MPII), 
+            
+            Thorax, //(MPII)
+            
+            Spine, //(H36M)
+            
+            Jaw, //(H36M)
+            
+            Head, //(H36M) 
+            
+            Nose, 
+            
+            L_Eye, 
+            
+            R_Eye, 
+            
+            L_Ear,
+            
+            R_Ear,
+        }
+
+        /// <summary>
+        /// 각도 정보가 들어오는 관절의 타입
+        /// </summary>
+        public enum AngleJointType : int
+        {
+            Global = 0,
+            L_Hip,
+            R_Hip,
+            Spine_01,
+            L_Knee,
+            R_Knee,
+            Spine_02,
+            L_Ankle,
+            R_Ankle,
+            Spine_03,
+            L_Toe,
+            R_Toe,
+            Middle_Shoulder,
+            L_Clavice,
+            R_Clavice,
+            Nose,
+            L_Shoulder,
+            R_Shoulder,
+            L_Elbow,
+            R_Elbow,
+            L_Wrist,
+            R_Wrist,
+            L_Palm, // (Invalid for SMPL-X)
+            R_Palm, // (Invalid for SMPL-X)
+        }
+    }
+    
+    /// <summary>
     /// 네트워크 내부 Feedback 타입, 컨텐츠에서는 다룰 일 없음
     /// </summary>
     public static class NetworkFeedbackType
@@ -282,7 +438,7 @@ namespace CellBig.Module.HumanDetection
     }
 
     /// <summary>
-    /// Joint를 다룰 샘플 콘텐츠 씬에서 필요한 옵션 : R&D 팀에서만 사용
+    /// Joint를 다룰 샘플 콘텐츠 씬에서 필요한 옵션 : RnD 팀에서만 사용
     /// </summary>
     public static class JointContentsOption
     {

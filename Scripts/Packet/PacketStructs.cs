@@ -69,7 +69,7 @@ namespace CellBig.Module.HumanDetection
     [Serializable]
     public struct RequestServerStatusPacketStruct
     {
-
+        
     }
 
     // 클라 송신 : 딥러닝 서버 이미지 연산 요청 Packet Struct / 나눠서 보낼 수 있음
@@ -143,5 +143,20 @@ namespace CellBig.Module.HumanDetection
         public uint offset;
         public int order;
         public ushort jointNumbers;
+    }
+
+    // 서버 송신 : 3D 휴먼포즈 결과 Packet Struct / 나뉘어서 올 수 있음
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    [Serializable]
+    public struct Response3DPosePacketStruct
+    {
+        public int frameID;
+        public uint jointWholeSize;
+        public ushort dataSize;
+        public ushort result;
+        public int nnType;
+        public uint offset;
+        public int order;
+        public ushort people;
     }
 }

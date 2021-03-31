@@ -37,8 +37,8 @@ namespace CellBig.Module.HumanDetection
             cameraOptionModel.camWidth = 1280;
             cameraOptionModel.camHeight = 720;
 
-            networkOptionModel.serverType = ServerType.Server_Titan;
-            networkOptionModel.nnType_RT = (int)NNType.None;
+            networkOptionModel.serverType = ServerType.Server_Local;
+            networkOptionModel.nnType_RT = (int)NNType.BMC;
             networkOptionModel.serverAccessKeyCode = AccessCode.Developer_AccessCode;
 
             preProcessOptionModel.flipOption = FlipOption.VerticalFlip;

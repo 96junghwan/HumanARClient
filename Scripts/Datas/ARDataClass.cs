@@ -71,31 +71,53 @@ namespace CellBig.Module.HumanDetection
     public class Human3DJoint
     {
         /// <summary>
-        /// 3D 관절 위치를 담고 있는 Vector3 리스트
+        /// Bounding Box의 이미지 상 좌표 : (x, y, width, height)
+        /// </summary>
+        public List<int> bbox;
+
+        /// <summary>
+        /// 3D 관절 위치를 담고 있는 Vector3 리스트 : 이미지 좌표 기준임
+        /// Z좌표는 이미지 크기에 따라 조정된 수치
         /// </summary>
         public List<Vector3> jointPositions;
 
         /// <summary>
-        /// 각 관절의 점수 리스트, 0 ~ 1로 정규화
+        /// 3D 관절 회전 정보를 담고 있는 Vecter3 리스트 : Axis-Angle Format
         /// </summary>
-        public List<float> jointScores;
-
-        /// <summary>
-        /// 한 사람의 관절 개수
-        /// </summary>
-        public int jointMax;
-
-        /// <summary>
-        /// 사람 번호
-        /// </summary>
-        public int humanID;
+        public List<Vector3> jointAngles;
 
         /// <summary>
         /// 생성자
         /// </summary>
-        public Human3DJoint()
+        public Human3DJoint(List<int> bbox, List<Vector3> jointPositions, List<Vector3> jointAngles)
         {
+            this.bbox = bbox;
+            this.jointPositions = jointPositions;
+            this.jointAngles = jointAngles;
+        }
+        
+        /// <summary>
+        /// (x, y, width, height) 구조의 Bounding Box를 넘겨주는 함수
+        /// </summary>
+        public List<int> GetBBox()
+        {
+            return this.bbox;
+        }
+        
+        /// <summary>
+        /// 지정한 관절의 이미지 기준 3D 좌표를 Vector3로 리턴하는 함수
+        /// </summary>
+        public Vector3 GetJointPosition(Joint3DData.PositionJointType type)
+        {
+            return this.jointPositions[(int)type];
+        }
 
+        /// <summary>
+        /// 지정한 관절의 Axis-Angle Format 기준 3D 회전 정보를 Vector3로 리턴하는 함수
+        /// </summary>
+        public Vector3 GetJointAngle(Joint3DData.AngleJointType type)
+        {
+            return this.jointAngles[(int)type];
         }
     }
 
@@ -108,10 +130,12 @@ namespace CellBig.Module.HumanDetection
         public int jointMax;
         public Texture2D texture;
         public List<HumanJoint> jointList;
+        public List<Human3DJoint> joint3DList;
         public Mat mask;
         public float capturedTime;
         public bool isFrameUpdated;
         public bool isJointUpdated;
+        public bool is3DJointUpdated;
         public bool isMaskUpdated;
 
 
@@ -123,9 +147,11 @@ namespace CellBig.Module.HumanDetection
             isFrameUpdated = false;
             isMaskUpdated = false;
             isJointUpdated = false;
+            is3DJointUpdated = false;
             capturedTime = Time.unscaledTime;
             texture = new Texture2D(width, height, TextureFormat.RGB24, false);
             jointList = new List<HumanJoint>();
+            joint3DList = new List<Human3DJoint>();
             mask = new Mat(height, width, CvType.CV_8UC1);
         }
     }

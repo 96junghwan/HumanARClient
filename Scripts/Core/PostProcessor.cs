@@ -258,6 +258,30 @@ namespace CellBig.Module.HumanDetection
             return result;
         }
 
+        // 작업 필요 : BBOX, Position, Angle 추출
+        // 서버에서 온 관절 데이터 byte[]를 HumanJointList로 파싱까지 해서 반환하는 함수
+        public static List<Human3DJoint> Bytes2Human3DJointList(byte[] inputByte)
+        {
+            List<Vector2> coordList = new List<Vector2>();
+            List<float> scoreList = new List<float>();
+
+            float[] floatArray = new float[inputByte.Length / 4];
+            Buffer.BlockCopy(inputByte, 0, floatArray, 0, inputByte.Length);
+
+            for (int i = 0; i < floatArray.Length; i+=3)
+            {
+                coordList.Add(new Vector2(floatArray[i], 1f - floatArray[i + 1]));
+                scoreList.Add(floatArray[i + 2]);
+            }
+
+            List<Human3DJoint> result = JointParsing(coordList, scoreList, jointNumbers, usePerfectOption, useJointParsing);
+
+            //coordList.Clear();
+            //scoreList.Clear();
+
+            return result;
+        }
+
         // 걍 쓰자
         // 서버에서 온 관절 데이터를 지정된 관절 체계로 파싱하는 함수, 약간의 후처리도 여기서 하고 있음
         public static List<HumanJoint> JointParsing(List<Vector2> joints, List<float> scores, int jointNumbers, bool perfectOption, bool useTargetJoint)
