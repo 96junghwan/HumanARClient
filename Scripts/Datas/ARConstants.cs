@@ -426,6 +426,90 @@ namespace CellBig.Module.HumanDetection
             L_Palm, // (Invalid for SMPL-X)
             R_Palm, // (Invalid for SMPL-X)
         }
+    
+        /// <summary>
+        /// 포지션 정보 들어오는 49개 관절 이름 리스트
+        /// </summary>
+        public static List<string> PositionJointName = new List<string>(){
+            "0 : OP_Nose", 
+            "1 : OP_Neck",
+            "2 : OP_R_Shoulder",
+            "3 : OP_R_Elbow",
+            "4 : OP_R_Wrist",
+            "5 : OP_L_Shoulder",
+            "6 : OP_L_Elbow",
+            "7 : OP_L_Wrist",
+            "8 : OP_Middle_Hip",
+            "9 : OP_R_Hip",
+            "10 : OP_R_Knee",
+            "11 : OP_R_Ankle",
+            "12 : OP_L_Hip",
+            "13 : OP_L_Knee",
+            "14 : OP_L_Ankle",
+            "15 : OP_R_Eye",
+            "16 : OP_L_Eye",
+            "17 : OP_R_Ear",
+            "18 : OP_L_Ear",
+            "19 : OP_L_Big_Toe",
+            "20 : OP_L_Small_Toe",
+            "21 : OP_L_Heel",
+            "22 : OP_R_Big_Toe",
+            "23 : OP_R_Small_Toe",
+            "24 : OP_R_Heel",
+
+            "25 : R_Ankle",
+            "26 : R_Knee",
+            "27 : R_Hip",
+            "28 : L_Hip",
+            "29 : L_Knee",
+            "30 : L_Ankle",
+            "31 : R_Wrist",
+            "32 : R_Elbow",
+            "33 : R_Shoulder",
+            "34 : L_Shoulder",
+            "35 : L_Elbow",
+            "36 : L_Wrist",
+
+            "37 : Neck (LSP)",
+            "38 : Top of Head (LSP)",
+            "39 : Pelvis (MPII)",
+            "40 : Thorax (LSP)",
+            "41 : Spine (H36M)",
+            "42 : Jaw (H36M)",
+            "43 : Head (H36M)",
+            "44 : Nose",
+            "45 : L_Eye",
+            "46 : R_Eye",
+            "47 : L_Ear",
+            "48 : R_Ear"
+        };
+
+        public static List<string> AnkleJointName = new List<string>(){
+            "0 : Global",
+            "1 : L_Hip",
+            "2 : R_Hip",
+            "3 : Spine_01",
+            "4 : L_Knee",
+            "5 : R_Knee",
+            "6 : Spine_02",
+            "7 : L_Ankle",
+            "8 : R_Ankle",
+            "9 : Spine_03",
+            "10 : L_Toe",
+            "11 : R_Toe",
+            "12 : Middle_Shoulder",
+            "13 : L_Clavice",
+            "14 : R_Clavice",
+            "15 : Nose",
+            "16 : L_Shoulder",
+            "17 : R_Shoulder",
+            "18 : L_Elbow",
+            "19 : R_Elbow",
+            "20 : L_Wrist",
+            "21 : R_Wrist",
+            "22 : L_Palm (Invalid)",
+            "23 : R_Palm (Invalid)"
+        };
     }
     
     /// <summary>

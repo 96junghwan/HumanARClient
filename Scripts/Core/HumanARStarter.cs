@@ -33,15 +33,15 @@ namespace CellBig.Module.HumanDetection
         // 기본 옵션 모델 설정 함수
         private void SetOptionModels_Standard()
         {
-            cameraOptionModel.cameraType = CameraType.OCam;
-            cameraOptionModel.camWidth = 1280;
-            cameraOptionModel.camHeight = 720;
+            cameraOptionModel.cameraType = CameraType.VideoLoader;
+            cameraOptionModel.camWidth = 640;
+            cameraOptionModel.camHeight = 480;
 
             networkOptionModel.serverType = ServerType.Server_Local;
             networkOptionModel.nnType_RT = (int)NNType.BMC;
             networkOptionModel.serverAccessKeyCode = AccessCode.Developer_AccessCode;
 
-            preProcessOptionModel.flipOption = FlipOption.VerticalFlip;
+            preProcessOptionModel.flipOption = FlipOption.NoFlip;
 
             bufferOptionModel.delaySeconds_RT = 1f;
         }

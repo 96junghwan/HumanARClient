@@ -20,12 +20,13 @@ namespace CellBig.Module.HumanDetection
         private CoreModuleStatusModel coreModuleStatusModel;
 
         // 비디오 경로
-        private string videoPath = "D:/Videos/SMTM/VVS.mp4";
+        //private string videoPath = "D:/Videos/SMTM/VVS.mp4";
         //private string videoPath = "D:/Videos/SMTM/Freak.mp4";
         //private string videoPath = "D:/Videos/SMTM/YearEnd.mp4";
         //private string videoPath = "D:/Videos/SMTM/Yay.mp4";
         //private string videoPath = "D:/Videos/SMTM/NewNew.mp4";
         //private string videoPath = "D:/Videos/SMTM/Hero.mp4";
+        private string videoPath = "D:/Videos/temp/dance.mp4";
 
         // 비디오 재생 및 저장 변수
         private VideoPlayer videoPlayer;

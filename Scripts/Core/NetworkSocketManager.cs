@@ -452,15 +452,6 @@ namespace CellBig.Module.HumanDetection
                 PacketHeader header = PacketConverter.Bytes2PacketStruct<PacketHeader>(recvHeaderBuffer);
                 bufferOffset += NetworkInfo.HeaderSize;
 
-                /*
-                coreModuleStatusReportMsgQ.Enqueue(new CoreModuleStatusReportMsg(
-                            CoreModuleReportType.Normal,
-                            (int)CoreModuleReportNormalCode.Network_Etc,
-                            "[msgType : " + header.msgType + "]",
-                            "at OnRecvCallback() of NetworkSocketManager.cs"));
-                */
-
-
                 // Packet Struct, Packet Data 복사
                 byte[] packetByte = new byte[header.packetStructSize + header.packetDataSize];
                 Buffer.BlockCopy(asyncRecvBuffer, bufferOffset, packetByte, 0, (header.packetStructSize + header.packetDataSize));       // 테스트
@@ -473,9 +464,6 @@ namespace CellBig.Module.HumanDetection
             // 다시 헤더 받기
             server.BeginReceive(asyncRecvBuffer, 0, NetworkInfo.NetworkbufferMax, SocketFlags.None, new AsyncCallback(OnRecvCallback), null);
         }
-
-
-
 
         // 옵션 모델 로드 함수
         private void LoadOptionModel()

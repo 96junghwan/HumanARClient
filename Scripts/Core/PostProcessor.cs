@@ -235,6 +235,20 @@ namespace CellBig.Module.HumanDetection
         static float temp_x;
         static float temp_y;
 
+        // Bytes2Human3DJointList용
+        const int HUMAN_MAX = 10;   // 최대 10명
+        static int tempByteOffset;
+        static int tempByteCount;
+        static int tempIndex;
+        static int tempJointIndex;
+
+        static int[] bboxArray = new int[HUMAN_MAX * 4];
+        static float[] jointPositionArray = new float[HUMAN_MAX * Joint3DData.POSITION_JOINT_MAX * 3];
+        static float[] jointAngleArray = new float[HUMAN_MAX * Joint3DData.ANGLE_JOINT_MAX * 3];
+
+
+
+
         // 서버에서 온 관절 데이터 byte[]를 HumanJointList로 파싱까지 해서 반환하는 함수
         public static List<HumanJoint> Bytes2HumanJointList(byte[] jointByte, int jointNumbers, bool usePerfectOption, bool useJointParsing)
         {
@@ -260,24 +274,67 @@ namespace CellBig.Module.HumanDetection
 
         // 작업 필요 : BBOX, Position, Angle 추출
         // 서버에서 온 관절 데이터 byte[]를 HumanJointList로 파싱까지 해서 반환하는 함수
-        public static List<Human3DJoint> Bytes2Human3DJointList(byte[] inputByte)
+        public static List<Human3DJoint> Bytes2Human3DJointList(byte[] inputByte, int people)
         {
-            List<Vector2> coordList = new List<Vector2>();
-            List<float> scoreList = new List<float>();
+            List<Human3DJoint> result = new List<Human3DJoint>();
+            tempByteOffset = 0;
+            tempByteCount = 0;
 
-            float[] floatArray = new float[inputByte.Length / 4];
-            Buffer.BlockCopy(inputByte, 0, floatArray, 0, inputByte.Length);
+            // bboxArray need bytes = people count * 4 data(w, y, width, height) * int32(4 bytes)
+            tempByteCount = (people * 4 * 4);
+            Buffer.BlockCopy(inputByte, tempByteOffset, bboxArray, 0, tempByteCount);
+            tempByteOffset += tempByteCount;
 
-            for (int i = 0; i < floatArray.Length; i+=3)
+            // jointPositionArray need bytes = people count * 49 joints * 3 vector(x, y, z) * float32(4 bytes)
+            tempByteCount = (people * Joint3DData.POSITION_JOINT_MAX * 3 * 4);
+            Buffer.BlockCopy(inputByte, tempByteOffset, jointPositionArray, 0, tempByteCount);
+            tempByteOffset += tempByteCount;
+
+            // jointAngleArray need bytes = people count * 24 joints * 3 vector(x, y, z) * float32(4 bytes)
+            tempByteCount = people * Joint3DData.ANGLE_JOINT_MAX * 3 * 4;
+            Buffer.BlockCopy(inputByte, tempByteOffset, jointAngleArray, 0, tempByteCount);
+
+            // 한 명씩 끊어서 Human3DJoint를 만든 후 List<Human3DJoint>에 추가하기
+            for (int i = 0; i < people; i++)
             {
-                coordList.Add(new Vector2(floatArray[i], 1f - floatArray[i + 1]));
-                scoreList.Add(floatArray[i + 2]);
+                var bbox = new List<int>();
+                var position = new List<Vector3>();
+                var angle = new List<Vector3>();
+
+                // Human BBox 데이터 옮기기
+                tempIndex = i * 4;
+                for(int b = 0; b < 4; b++)
+                {
+                    bbox.Add(bboxArray[tempIndex + b]);
+                }
+
+                // Joint Position 데이터 옮기기
+                tempIndex = i * Joint3DData.POSITION_JOINT_MAX * 3;
+                for(int p = 0; p < Joint3DData.POSITION_JOINT_MAX; p++)
+                {
+                    tempJointIndex = p * 3;
+                    position.Add(new Vector3(
+                        jointPositionArray[tempIndex + tempJointIndex],
+                        480f - jointPositionArray[tempIndex + tempJointIndex + 1],
+                        jointPositionArray[tempIndex + tempJointIndex + 2]
+                    ));
+                }
+
+                // Joint Angle 데이터 옮기기
+                tempIndex = i * Joint3DData.ANGLE_JOINT_MAX * 3;
+                for(int a = 0; a < Joint3DData.ANGLE_JOINT_MAX; a++)
+                {
+                    tempJointIndex = a * 3;
+                    angle.Add(new Vector3(
+                        jointAngleArray[tempIndex + tempJointIndex],
+                        jointAngleArray[tempIndex + tempJointIndex + 1],
+                        jointAngleArray[tempIndex + tempJointIndex + 2]
+                    ));
+                }
+
+                // 결과 리스트에 사람 하나 추가
+                result.Add(new Human3DJoint(bbox, position, angle));
             }
-
-            List<Human3DJoint> result = JointParsing(coordList, scoreList, jointNumbers, usePerfectOption, useJointParsing);
-
-            //coordList.Clear();
-            //scoreList.Clear();
 
             return result;
         }

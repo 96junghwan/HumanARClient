@@ -247,7 +247,48 @@ namespace CellBig.Module.HumanDetection
         // 수신된 3D 관절 리스트를 버퍼에 저장하는 함수
         private void OnDetectHuman3DJointResultMsg(DetectHuman3DJointResultMsg msg)
         {
+            // 콘텐츠에서 요청한 데이터일 경우
+            if (msg.frameID < 0)
+            {
+                return;
+            }
 
+            // 버퍼에서 딜레이 적용 안하고 바로 재생하는 경우
+            if (bufferOptionModel.noDelay)
+            {
+                noDelay3DJointMsgQ.Enqueue(new PlayHuman3DJointListMsg(msg.frameID, msg.jointList));
+                return;
+            }
+
+            // 버퍼에서 프레임 번호 탐색
+            int index = FindIndex(msg.frameID);
+
+            // 버퍼에 해당 프레임 번호가 없을 경우
+            if (index == -1)
+            {
+                coreModuleStatusReportMsgQ.Enqueue(new CoreModuleStatusReportMsg(
+                            CoreModuleReportType.Warning,
+                            (int)CoreModuleReportWarningCode.Buffer_CannotFoundIndex,
+                        "[버퍼에서 일치하는 frameID를 찾을 수 없습니다 : " + msg.frameID + "]",
+                        "at OnDetectHumanJointResultMsg() of BufferManager.cs"));
+                networkFeedbackMsgQ.Enqueue(new NetworkFeedbackMsg(NetworkFeedbackType.InvalidData));
+                return;
+            }
+
+            // 이미 재생된 프레임의 관절 리스트를 수신한 경우 : 관절 밀림 현상
+            if (!buffer[index].isFrameUpdated)
+            {
+                coreModuleStatusReportMsgQ.Enqueue(new CoreModuleStatusReportMsg(
+                            CoreModuleReportType.Warning,
+                            (int)CoreModuleReportWarningCode.Buffer_InvalidData,
+                        "[이미 재생된 프레임의 3D 관절을 수신했습니다]",
+                        "at OnDetectHumanJointResultMsg() of BufferManager.cs"));
+                networkFeedbackMsgQ.Enqueue(new NetworkFeedbackMsg(NetworkFeedbackType.InvalidData));
+                return;
+            }
+
+            buffer[index].joint3DList = msg.jointList;
+            buffer[index].is3DJointUpdated = true;
         }
 
         // 수신된 마스크를 버퍼에 저장하는 함수

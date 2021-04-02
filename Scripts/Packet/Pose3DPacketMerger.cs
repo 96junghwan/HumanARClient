@@ -81,16 +81,12 @@ namespace CellBig.Module.HumanDetection
         // 필드 값으로 마스크 검출 결과 메세지 생성해서 전송까지 하는 함수
         public void SendMsg(int index)
         {
-            List<HumanJoint> jointList;
+            List<Human3DJoint> jointList;
 
             // 사람이 검출된 경우
-            if (packetList[index].jointWholeSize > 0)
+            if (packetList[index].people > 0)
             {
-                jointList = JointParser.Bytes2Human3DJointList(
-                    packetList[index].resultByte, 
-                    packetList[index].people, 
-                    postProcessOptionModel.useJointPerfectFilter, 
-                    postProcessOptionModel.useJointParsing);
+                jointList = JointParser.Bytes2Human3DJointList(packetList[index].resultByte, packetList[index].people);
             }
 
             // 사람이 검출되지 않은 경우
