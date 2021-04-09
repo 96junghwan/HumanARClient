@@ -478,6 +478,7 @@ Transform:
   - {fileID: 400088}
   - {fileID: 400024}
   - {fileID: 400148}
+  - {fileID: 7117437522105770332}
   m_Father: {fileID: 400262}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -2080,16 +2081,16 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 100096}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 100, y: 100, z: 100}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 400322}
   - {fileID: 400000}
   - {fileID: 400182}
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
 --- !u!95 &9500000
 Animator:
   serializedVersion: 3
@@ -2103,7 +2104,7 @@ Animator:
   m_Controller: {fileID: 0}
   m_CullingMode: 1
   m_UpdateMode: 0
-  m_ApplyRootMotion: 0
+  m_ApplyRootMotion: 1
   m_LinearVelocityBlending: 0
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
@@ -2121,29 +2122,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f20521d5e1342bc439b1ae7ba84ed00b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  positionObjectList: []
-  angleObjectList: []
   Global: {fileID: 100096}
-  Head: {fileID: 100022}
+  Hips: {fileID: 100200}
+  Spine: {fileID: 100104}
+  Chest: {fileID: 100220}
+  UpperChest: {fileID: 100308}
   Neck: {fileID: 100262}
-  L_Clavicle: {fileID: 100260}
+  Head: {fileID: 100022}
+  Nose: {fileID: 2926282675623714212}
+  L_Hip: {fileID: 100162}
+  L_Knee: {fileID: 100058}
+  L_Ankle: {fileID: 100068}
+  L_Toe: {fileID: 100110}
+  R_Hip: {fileID: 100310}
+  R_Knee: {fileID: 100042}
+  R_Ankle: {fileID: 100004}
+  R_Toe: {fileID: 100242}
   L_Shoulder: {fileID: 100230}
   L_Elbow: {fileID: 100224}
   L_Wrist: {fileID: 100002}
-  R_Clavicle: {fileID: 100282}
   R_Shoulder: {fileID: 100214}
   R_Elbow: {fileID: 100186}
   R_Wrist: {fileID: 100178}
-  L_UppderLeg: {fileID: 100162}
-  L_LowerLeg: {fileID: 100058}
-  L_Foot: {fileID: 100068}
-  L_Toe: {fileID: 100110}
-  R_UppderLeg: {fileID: 100310}
-  R_LowerLeg: {fileID: 100042}
-  R_Foot: {fileID: 100004}
-  R_Toe: {fileID: 100242}
-  L_Eye: {fileID: 100312}
-  R_Eye: {fileID: 100290}
 --- !u!114 &4103180346513664355
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6920,4 +6920,34 @@ Transform:
   - {fileID: 400046}
   m_Father: {fileID: 400062}
   m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &2926282675623714212
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7117437522105770332}
+  m_Layer: 0
+  m_Name: Nose
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7117437522105770332
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2926282675623714212}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.0045, y: 0.1004, z: -0.0066}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 400022}
+  m_RootOrder: 15
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

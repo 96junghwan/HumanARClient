@@ -68,10 +68,10 @@ namespace CellBig.Module.HumanDetection
             }
 
             // 프레임 번호 연속성 검사
-            int frameSequenceCheck = frameID - lagacyFrameIDList[LagacyListMax-1];
-            for (int i = LagacyListMax - 1; i>0; i--)
+            int frameSequenceCheck = frameID - lagacyFrameIDList[LagacyListMax - 1];
+            for (int i = LagacyListMax - 1; i > 0; i--)
             {
-                frameSequenceCheck += (lagacyFrameIDList[i] - lagacyFrameIDList[i-1]);
+                frameSequenceCheck += (lagacyFrameIDList[i] - lagacyFrameIDList[i - 1]);
             }
 
             // 프레임 번호 연속성 검사 탈락
@@ -116,9 +116,9 @@ namespace CellBig.Module.HumanDetection
         // 임시 Low Pass Filter 적용 함수 : 이거 적용 전에 관절 검사도 해야하는데...
         private void TempLowPassFilter(List<HumanJoint> newHuman)
         {
-            for (int h = 0; h<newHuman.Count; h++)
+            for (int h = 0; h < newHuman.Count; h++)
             {
-                for (int j = 0; j<newHuman[0].jointMax; j++)
+                for (int j = 0; j < newHuman[0].jointMax; j++)
                 {
                     // 하드 코딩
                     newHuman[h].viewportJointPositions[j] =
@@ -172,7 +172,7 @@ namespace CellBig.Module.HumanDetection
     // 한 프레임에서 유효한 관절 개수가 일정 이상인 사람의 관절만 남기는 static 클래스
     public static class JointPerfectFilter
     {
-        
+
         // 관절 체계 : 한 사람당 관절 개수, 만족해야 하는 유효 관절 개수 - 입력 추가
         public static void PerfectFiltering()
         {
@@ -223,7 +223,7 @@ namespace CellBig.Module.HumanDetection
             return result;
         }
     }
-   
+
 
     // FastPose나 AlphaPose 등에서 처리한 결과가 들어왔을 때 들어온 관절 리스트를 관절 15개 기준으로 재배열해주는 static 클래스
     public static class JointParser
@@ -243,8 +243,8 @@ namespace CellBig.Module.HumanDetection
         static int tempJointIndex;
 
         static int[] bboxArray = new int[HUMAN_MAX * 4];
-        static float[] jointPositionArray = new float[HUMAN_MAX * Joint3DData.POSITION_JOINT_MAX * 3];
-        static float[] jointAngleArray = new float[HUMAN_MAX * Joint3DData.ANGLE_JOINT_MAX * 3];
+        static float[] jointPositionArray = new float[HUMAN_MAX * Joint3DData.PositionJointType.Count.Int() * 3];
+        static float[] jointAngleArray = new float[HUMAN_MAX * Joint3DData.AngleJointType.Count.Int() * 3];
 
 
 
@@ -258,7 +258,7 @@ namespace CellBig.Module.HumanDetection
             float[] floatArray = new float[jointByte.Length / 4];
             Buffer.BlockCopy(jointByte, 0, floatArray, 0, jointByte.Length);
 
-            for (int i = 0; i < floatArray.Length; i+=3)
+            for (int i = 0; i < floatArray.Length; i += 3)
             {
                 coordList.Add(new Vector2(floatArray[i], 1f - floatArray[i + 1]));
                 scoreList.Add(floatArray[i + 2]);
@@ -286,12 +286,12 @@ namespace CellBig.Module.HumanDetection
             tempByteOffset += tempByteCount;
 
             // jointPositionArray need bytes = people count * 49 joints * 3 vector(x, y, z) * float32(4 bytes)
-            tempByteCount = (people * Joint3DData.POSITION_JOINT_MAX * 3 * 4);
+            tempByteCount = (people * Joint3DData.PositionJointType.Count.Int() * 3 * 4);
             Buffer.BlockCopy(inputByte, tempByteOffset, jointPositionArray, 0, tempByteCount);
             tempByteOffset += tempByteCount;
 
             // jointAngleArray need bytes = people count * 24 joints * 3 vector(x, y, z) * float32(4 bytes)
-            tempByteCount = people * Joint3DData.ANGLE_JOINT_MAX * 3 * 4;
+            tempByteCount = people * Joint3DData.AngleJointType.Count.Int() * 3 * 4;
             Buffer.BlockCopy(inputByte, tempByteOffset, jointAngleArray, 0, tempByteCount);
 
             // 한 명씩 끊어서 Human3DJoint를 만든 후 List<Human3DJoint>에 추가하기
@@ -303,26 +303,26 @@ namespace CellBig.Module.HumanDetection
 
                 // Human BBox 데이터 옮기기
                 tempIndex = i * 4;
-                for(int b = 0; b < 4; b++)
+                for (int b = 0; b < 4; b++)
                 {
                     bbox.Add(bboxArray[tempIndex + b]);
                 }
 
-                // Joint Position 데이터 옮기기
-                tempIndex = i * Joint3DData.POSITION_JOINT_MAX * 3;
-                for(int p = 0; p < Joint3DData.POSITION_JOINT_MAX; p++)
+                // Joint Position 데이터 옮기기 : 정규화
+                tempIndex = i * Joint3DData.PositionJointType.Count.Int() * 3;
+                for (int p = 0; p < Joint3DData.PositionJointType.Count.Int(); p++)
                 {
                     tempJointIndex = p * 3;
                     position.Add(new Vector3(
-                        jointPositionArray[tempIndex + tempJointIndex],
-                        480f - jointPositionArray[tempIndex + tempJointIndex + 1],
-                        jointPositionArray[tempIndex + tempJointIndex + 2]
+                        jointPositionArray[tempIndex + tempJointIndex] / 640f,
+                        (480f - jointPositionArray[tempIndex + tempJointIndex + 1]) / 480f,
+                        jointPositionArray[tempIndex + tempJointIndex + 2] / 360f
                     ));
                 }
 
                 // Joint Angle 데이터 옮기기
-                tempIndex = i * Joint3DData.ANGLE_JOINT_MAX * 3;
-                for(int a = 0; a < Joint3DData.ANGLE_JOINT_MAX; a++)
+                tempIndex = i * Joint3DData.AngleJointType.Count.Int() * 3;
+                for (int a = 0; a < Joint3DData.AngleJointType.Count.Int(); a++)
                 {
                     tempJointIndex = a * 3;
                     angle.Add(new Vector3(

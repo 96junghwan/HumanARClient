@@ -141,6 +141,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2fa275ee5754ff24994e7b1d80dedea0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  avatarType: 1
+  useLowPassFilter: 1
+  useKalmanFilter: 1
 --- !u!4 &47853350
 Transform:
   m_ObjectHideFlags: 0

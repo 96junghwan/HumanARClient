@@ -17,7 +17,7 @@ namespace CellBig.Module.HumanDetection
         private OCamOptionModel oCamOptionModel;
         private NetworkControlOptionModel networkControlOptionModel;
 
-        // 옵션 모델 생성 함수
+        // 옵션 모델 생성
         private void CreateOptionModels()
         {
             coreModuleStatusModel = new CoreModuleStatusModel();
@@ -30,7 +30,7 @@ namespace CellBig.Module.HumanDetection
             networkControlOptionModel = new NetworkControlOptionModel();
         }
 
-        // 기본 옵션 모델 설정 함수
+        // 기-본 옵션 설정
         private void SetOptionModels_Standard()
         {
             cameraOptionModel.cameraType = CameraType.VideoLoader;
@@ -46,7 +46,7 @@ namespace CellBig.Module.HumanDetection
             bufferOptionModel.delaySeconds_RT = 1f;
         }
 
-        // 고급 옵션 모델 설정 함수
+        // 고오오오급 옵션 설정
         private void SetOptionModels_Advanced()
         {
             coreModuleStatusModel.coreModuleUseOption = (int)CoreModuleIndex.Camera | (int)CoreModuleIndex.NetworkSocket | (int)CoreModuleIndex.Buffer;
@@ -87,7 +87,7 @@ namespace CellBig.Module.HumanDetection
             networkControlOptionModel.invalidDataFeedbackMax = 20;
             networkControlOptionModel.serverSlowFeedbackMax = 20;
             networkControlOptionModel.positiveNetworkFeedbackMax = 40;
-            
+
             // IP, Port 번호 자동 선택
             switch (networkOptionModel.serverType)
             {
